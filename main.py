@@ -9,6 +9,9 @@ from google.oauth2.credentials import Credentials
 
 def main():
     service_client = auth_google()
+    messages = get_unread_emails(userid='me', service_client=service_client)
+
+    print("pause")
 
 
 def auth_google():
@@ -36,6 +39,34 @@ def auth_google():
             token.write(creds.to_json())
 
     return build('gmail', 'v1', credentials=creds)
+
+
+def get_unread_emails(userid, service_client,
+                      include_spam_trash: bool = False,
+                      max_results: int = 500) -> list:
+    messages = service_client.users().messages().list(userId='me', includeSpamTrash=include_spam_trash,
+                                                      maxResults=max_results, q="is:unread")
+    messages = messages.execute()
+    message_id_list = messages['messages']
+
+    if 'nextPageToken' in messages:
+        continue_paging = True
+
+        while continue_paging:
+            messages = service_client.users().messages().list(userId='me', includeSpamTrash=include_spam_trash,
+                                                              maxResults=max_results, q="is:unread", pageToken=messages['nextPageToken'])
+            messages = messages.execute()
+
+            if messages['messages']:
+                message_id_list = message_id_list + messages['messages']
+            if 'nextPageToken' not in messages:
+                continue_paging = False
+
+    message_id_list = list(set(message_id_list))
+
+    return message_id_list
+
+
 
 
 if __name__ == "__main__":
