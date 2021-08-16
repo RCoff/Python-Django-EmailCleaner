@@ -29,6 +29,7 @@ def main():
             pickle.dump(messages, pf, protocol=pickle.HIGHEST_PROTOCOL)
 
     df = pd.DataFrame(messages)
+    group_count_df = df.groupby(by=['from-domain'])['id'].count()
 
     print("pause")
 
