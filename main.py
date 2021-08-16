@@ -1,17 +1,34 @@
 import logging
 import re
-
+import pickle
 import os.path
+
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+import pandas as pd
+
+import config
 
 
 def main():
     service_client = auth_google()
-    messages = get_unread_emails(userid='me', service_client=service_client)
-    messages = parse_emails(messages, service_client)
+    messages = None
+
+    try:
+        with open('data.p', 'rb') as pf:
+            messages = pickle.load(pf)
+    except:
+        pass
+
+    if messages is None:
+        messages = get_unread_emails(userid='me', service_client=service_client)
+        messages = parse_emails(messages, service_client)
+        with open('data.p', 'wb') as pf:
+            pickle.dump(messages, pf, protocol=pickle.HIGHEST_PROTOCOL)
+
+    df = pd.DataFrame(messages)
 
     print("pause")
 
@@ -107,7 +124,7 @@ def parse_emails(messages: list, service_client) -> list:
 
 
 def parse_email_domain(sender_email: str):
-    regex_string = r"(?<=@).*\.[a-z]{2,3}"  # (?=\>)"
+    regex_string = r"(?<=@).*\.[a-zA-Z]{2,3}(?=\>|$)"
     parsed_sender = re.search(regex_string, sender_email).group(0)
 
     return parsed_sender
