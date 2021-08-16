@@ -1,4 +1,5 @@
 import logging
+import re
 
 import os.path
 from googleapiclient.discovery import build
@@ -10,6 +11,7 @@ from google.oauth2.credentials import Credentials
 def main():
     service_client = auth_google()
     messages = get_unread_emails(userid='me', service_client=service_client)
+    messages = parse_emails(messages, service_client)
 
     print("pause")
 
@@ -62,11 +64,53 @@ def get_unread_emails(userid, service_client,
             if 'nextPageToken' not in messages:
                 continue_paging = False
 
-    message_id_list = list(set(message_id_list))
-
     return message_id_list
 
 
+def parse_emails(messages: list, service_client) -> list:
+    message_details_list = []
+    for message in messages:
+        message_details = service_client.users().messages().get(userId='me', id=message['id'], format='full')
+        message_details = message_details.execute()
+
+        message_detail_dict = {}
+        if 'payload' in message_details:
+            message_detail_dict.update({'id': message_details['id']})
+
+            if 'labelIds' in message_details:
+                for label in message_details['labelIds']:
+                    if label != 'UNREAD' and label != 'INBOX':
+                        if label == "IMPORTANT":
+                            message_detail_dict.update({'important': True})
+
+                        if 'labels' in message_detail_dict:
+                            message_detail_dict.get('labels').append(label)
+                        else:
+                            message_detail_dict.update({'labels': [label]})
+
+            if 'headers' in message_details['payload']:
+                if len(message_details['payload']['headers']) > 0:
+                    for header in message_details['payload']['headers']:
+                        if header.get('name', None) == 'From':
+                            message_detail_dict.update({'from': header.get('value', "")})
+                            message_detail_dict.update({'from-domain': parse_email_domain(header.get('value', ""))})
+                        elif header.get('name', None) == 'Subject':
+                            message_detail_dict.update({'subject': header.get('value', "")})
+                        elif header.get('name', None) == 'List-Unsubscribe-Post':
+                            message_detail_dict.update({'unsubscribe-type': header.get('value', "")})
+                        elif header.get('name', None) == 'List-Unsubscribe':
+                            message_detail_dict.update({'unsubscribe': header.get('value', "")})
+                    else:
+                        message_details_list.append(message_detail_dict)
+
+    return message_details_list
+
+
+def parse_email_domain(sender_email: str):
+    regex_string = r"(?<=@).*\.[a-z]{2,3}"  # (?=\>)"
+    parsed_sender = re.search(regex_string, sender_email).group(0)
+
+    return parsed_sender
 
 
 if __name__ == "__main__":
