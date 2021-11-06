@@ -17,14 +17,22 @@
                             <th scope="col">Domain</th>
                             <th scope="col"></th>
                         </thead>
-                    </table>
                     {% for index, row in loaded_emails.parsed_messages.iterrows %}
+                        <tr>
+                            <th scope="row">{{index}}</th>
+                            <td>{{ row.from }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                     {% endfor %}
+                    </table>
                 {% else %}
                     <h1 class="display-5">Hello!</h1>
-                    <a href="{% url 'load-emails' %}">
-                        <button type="button" class="btn btn-lg btn-primary">Load Emails</button>
-                    </a>
+                    <div class="mx-auto">
+                        <a href="{% url 'load-emails' %}">
+                            <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Load Emails</button>
+                        </a>
+                    </div>
                 {% endif %}
             </div>
         </div>
