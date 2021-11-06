@@ -50,11 +50,11 @@ def auth_google(scopes: list or None = None, session=None):
             else:
                 raise ValueError('App credentials not provided')
 
-        # Save the credentials for the next run
-        session['credentials'] = creds.to_json()
-        # logger.debug("Saving credentials to 'token.json'")
-        # with open('token.json', 'w') as token:
-        #     token.write(creds.to_json())
+            # Save the credentials for the next run
+            session['credentials'] = creds.to_json()
+            # logger.debug("Saving credentials to 'token.json'")
+            # with open('token.json', 'w') as token:
+            #     token.write(creds.to_json())
 
     logger.debug("Done running authentication flow")
 
