@@ -7,3 +7,4 @@ __pycache__/
 *.p
 db.sqlite3
 *.env
+requirements_old.txt
