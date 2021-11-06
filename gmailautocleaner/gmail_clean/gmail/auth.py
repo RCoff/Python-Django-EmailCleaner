@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 import json
+import os
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -37,7 +38,13 @@ def auth_google(scopes: list or None = None, session=None):
             creds.refresh(Request())
         else:
             logger.debug("Using client secret file 'credentials.json' for authentication")
-            creds_file = str(Path(__file__).parent.joinpath('credentials.json').resolve())
+            if Path(__file__).parent.joinpath('credentials.json').exists():
+                creds_file = str(Path(__file__).parent.joinpath('credentials.json').resolve())
+            elif os.environ.get('credentials'):
+                creds_file = json.loads(os.environ.get('credentials'))
+            else:
+                raise ValueError('App credentials not provided')
+
             flow = InstalledAppFlow.from_client_secrets_file(
                 creds_file, scopes)
             creds = flow.run_local_server(port=0)

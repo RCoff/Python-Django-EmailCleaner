@@ -2,7 +2,6 @@ import datetime
 import logging
 
 import pandas as pd
-
 from gmail_clean.gmail.auth import auth_google
 from gmail_clean.utils import load_pickle, save_pickle
 from gmail_clean.gmail.get_emails import get_emails
