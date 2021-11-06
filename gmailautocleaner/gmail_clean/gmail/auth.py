@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 logging.getLogger('googleapiclient').setLevel(logging.INFO)
 
 
+# TODO: https://developers.google.com/identity/protocols/oauth2/web-server
+
 def auth_google(scopes: list or None = None, session=None):
     """Shows basic usage of the Gmail API.
     Lists the user's Gmail labels.
@@ -38,17 +40,26 @@ def auth_google(scopes: list or None = None, session=None):
             creds.refresh(Request())
         else:
             logger.debug("Using client secret file 'credentials.json' for authentication")
-            if Path(__file__).parent.joinpath('credentials.json').exists():
+            if Path(__file__).parent.joinpath('credentials_.json').exists():
                 creds_file = str(Path(__file__).parent.joinpath('credentials.json').resolve())
                 flow = InstalledAppFlow.from_client_secrets_file(
                     creds_file, scopes)
                 creds = flow.run_local_server(port=0)
-            elif os.environ.get('credentials'):
-                creds_file = json.loads(os.environ.get('credentials'))
-                flow = Flow.from_client_config(client_config=creds_file, scopes=scopes)
-                print("pause")
             else:
-                raise ValueError('App credentials not provided')
+                if os.environ.get('credentials'):
+                    creds_file = json.loads(os.environ.get('credentials'))
+                elif os.environ.get('web_credentials'):
+                    creds_file = json.loads(os.environ.get('web_credentials'))
+                else:
+                    raise ValueError('App credentials not provided')
+
+                flow = Flow.from_client_config(client_config=creds_file, scopes=scopes)
+                flow.redirect_uri = os.environ.get('google_redirect_uri')
+                authorization_url, state = flow.authorization_url(
+                    access_type='offline',
+                    include_granted_scopes='true'
+                )
+                print("pause")
 
             # Save the credentials for the next run
             session['credentials'] = creds.to_json()
