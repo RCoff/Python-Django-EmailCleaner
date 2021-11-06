@@ -12,26 +12,33 @@
                 {% if loaded_emails %}
                     <table class="table">
                         <thead>
-                            <th scope="col">#</th>
-                            <th scope="col">From</th>
-                            <th scope="col">Domain</th>
-                            <th scope="col"></th>
+                        <th scope="col">#</th>
+                        <th scope="col">From</th>
+                        <th scope="col">Domain</th>
+                        <th scope="col"></th>
                         </thead>
-                    {% for index, row in loaded_emails.parsed_messages.iterrows %}
-                        <tr>
-                            <th scope="row">{{index}}</th>
-                            <td>{{ row.from }}</td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    {% endfor %}
+                        {% for index, row in loaded_emails.parsed_messages.iterrows %}
+                            <tr>
+                                <th scope="row">{{ index }}</th>
+                                <td>{{ row.from }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
                     </table>
                 {% else %}
                     <h1 class="display-5">Hello!</h1>
-                    <div class="mx-auto">
-                        <a href="{% url 'load-emails' %}">
-                            <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Load Emails</button>
-                        </a>
+                    <div class="row">
+                        <div class="col">
+                            <a href="{% url 'gmail-load' %}">
+                                <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Gmail</button>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="{% url 'outlook-sign-in' %}">
+                                <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Outlook</button>
+                            </a>
+                        </div>
                     </div>
                 {% endif %}
             </div>
