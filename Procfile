@@ -1,1 +1,1 @@
-web: gunicorn gmailautocleaner.wsgi
+web: gunicorn gmailautocleaner/gmailautocleaner.wsgi
