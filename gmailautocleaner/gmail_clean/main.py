@@ -11,8 +11,8 @@ from gmail_clean.gmail.parse_emails import parse_emails
 logger = logging.getLogger(__name__)
 
 
-def main() -> dict:
-    service_client = auth_google()
+def main(session=None) -> dict:
+    service_client = auth_google(session=session)
 
     messages = load_pickle('parsed_emails.p')
 

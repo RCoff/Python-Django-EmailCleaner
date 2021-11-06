@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import json
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger('googleapiclient').setLevel(logging.INFO)
 
 
-def auth_google(scopes: list or None = None):
+def auth_google(scopes: list or None = None, session=None):
     """Shows basic usage of the Gmail API.
     Lists the user's Gmail labels.
     """
@@ -20,27 +21,32 @@ def auth_google(scopes: list or None = None):
     logger.debug(f"Authenticating with Google API", extra={'scopes': scopes,
                                                            'provider': 'gmail'})
     creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if Path('token.json').exists():
-        logger.debug("Using file 'token.json' for authentication")
-        creds = Credentials.from_authorized_user_file('token.json', scopes)
-    # If there are no (valid) credentials available, let the user log in.
+    if session:
+        if session.get('credentials'):
+            creds = Credentials.from_authorized_user_info(json.loads(session.get('credentials')))
+
     if not creds or not creds.valid:
+        if not creds:
+            if Path(__file__).parent.joinpath('token.json').exists():
+                logger.debug("Using file 'token.json' for authentication")
+                creds = Credentials.from_authorized_user_file('token.json', scopes)
+
         if creds and creds.expired and creds.refresh_token:
             logger.debug("Refreshing credentials", extra={'scopes': scopes,
-                                                          'providor': 'gmail'})
+                                                          'provider': 'gmail'})
             creds.refresh(Request())
         else:
             logger.debug("Using client secret file 'credentials.json' for authentication")
+            creds_file = str(Path(__file__).parent.joinpath('credentials.json').resolve())
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', scopes)
+                creds_file, scopes)
             creds = flow.run_local_server(port=0)
+
         # Save the credentials for the next run
-        logger.debug("Saving credentials to 'token.json'")
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
+        session['credentials'] = creds.to_json()
+        # logger.debug("Saving credentials to 'token.json'")
+        # with open('token.json', 'w') as token:
+        #     token.write(creds.to_json())
 
     logger.debug("Done running authentication flow")
 
