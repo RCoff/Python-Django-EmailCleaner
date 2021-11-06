@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'data',
     'api',
     'gmail_clean',
+    'gmailautocleaner',
 ]
 
 MIDDLEWARE = [
