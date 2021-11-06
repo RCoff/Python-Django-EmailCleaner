@@ -4,7 +4,7 @@ import json
 import os
 
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import InstalledAppFlow, Flow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
@@ -40,14 +40,15 @@ def auth_google(scopes: list or None = None, session=None):
             logger.debug("Using client secret file 'credentials.json' for authentication")
             if Path(__file__).parent.joinpath('credentials.json').exists():
                 creds_file = str(Path(__file__).parent.joinpath('credentials.json').resolve())
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    creds_file, scopes)
+                creds = flow.run_local_server(port=0)
             elif os.environ.get('credentials'):
                 creds_file = json.loads(os.environ.get('credentials'))
+                flow = Flow.from_client_config(client_config=creds_file)
+                print("pause")
             else:
                 raise ValueError('App credentials not provided')
-
-            flow = InstalledAppFlow.from_client_secrets_file(
-                creds_file, scopes)
-            creds = flow.run_local_server(port=0)
 
         # Save the credentials for the next run
         session['credentials'] = creds.to_json()
