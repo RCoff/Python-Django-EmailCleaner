@@ -9,7 +9,23 @@
     <div class="container-sm">
         <div class="p-5 mb-4 bg-light rounded-3">
             <div class="container-fluid py-5">
-                <h1 class="display-5">Hello!</h1>
+                {% if loaded_emails %}
+                    <table class="table">
+                        <thead>
+                            <th scope="col">#</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Domain</th>
+                            <th scope="col"></th>
+                        </thead>
+                    </table>
+                    {% for index, row in loaded_emails.parsed_messages.iterrows %}
+                    {% endfor %}
+                {% else %}
+                    <h1 class="display-5">Hello!</h1>
+                    <a href="{% url 'load-emails' %}">
+                        <button type="button" class="btn btn-lg btn-primary">Load Emails</button>
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
