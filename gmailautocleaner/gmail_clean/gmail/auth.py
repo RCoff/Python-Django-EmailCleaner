@@ -45,7 +45,7 @@ def auth_google(scopes: list or None = None, session=None):
                 creds = flow.run_local_server(port=0)
             elif os.environ.get('credentials'):
                 creds_file = json.loads(os.environ.get('credentials'))
-                flow = Flow.from_client_config(client_config=creds_file)
+                flow = Flow.from_client_config(client_config=creds_file, scopes=scopes)
                 print("pause")
             else:
                 raise ValueError('App credentials not provided')
