@@ -1,1 +1,1 @@
-web: gunicorn --chdir /gmailautocleaner/gmailautocleaner gmailautocleaner.wsgi
+web: gunicorn --chdir /app/gmailautocleaner gmailautocleaner.wsgi
