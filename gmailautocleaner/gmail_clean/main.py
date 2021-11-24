@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(session=None) -> dict:
-    creds = Credentials(session['credentials'])
+    creds = Credentials(**session['credentials'])
     service_client = build('gmail', 'v1', credentials=creds)
     # service_client = auth_google(session=session)
 
