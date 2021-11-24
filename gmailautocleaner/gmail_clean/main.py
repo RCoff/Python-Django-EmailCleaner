@@ -2,7 +2,8 @@ import datetime
 import logging
 
 import pandas as pd
-from gmail_clean.gmail.auth import auth_google
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 from gmail_clean.utils import load_pickle, save_pickle
 from gmail_clean.gmail.get_emails import get_emails
 from gmail_clean.gmail.parse_emails import parse_emails
@@ -11,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 def main(session=None) -> dict:
-    service_client = auth_google(session=session)
+    creds = Credentials(session['credentials'])
+    service_client = build('gmail', 'v1', credentials=creds)
+    # service_client = auth_google(session=session)
 
     messages = load_pickle('parsed_emails.p')
 
