@@ -43,7 +43,8 @@ def main(session=None) -> dict:
     unread_percent_df = unread_percent_df[(unread_percent_df['unread'] >= 10) & (unread_percent_df['Unread_%'] >= 0.75)]
 
     return {'parsed_messages': df,
-            'critical_unread_messages': unread_percent_df}
+            'critical_unread_messages': unread_percent_df,
+            'total_messages': len(df.index)}
 
 
 if __name__ == "__main__":

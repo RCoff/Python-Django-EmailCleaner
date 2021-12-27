@@ -8,14 +8,17 @@
 {% block body %}
     <div class="container-sm">
         <div class="p-5 mb-4 bg-light rounded-3">
-            <div class="container-fluid py-5">
+            <div class="container-fluid">
+                {% if loaded_emails.total_messages %}
+                    <h1 class="display-6 py-2 mb-3">{{ loaded_emails.total_messages }} emails loaded</h1>
+                {% endif %}
                 {% if loaded_emails %}
-                    <table class="table">
+                    <table class="table py-3">
                         <thead>
-                        <th scope="col">#</th>
-                        <th scope="col">From</th>
-                        <th scope="col">Domain</th>
-                        <th scope="col"></th>
+                            <th scope="col">#</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Domain</th>
+                            <th scope="col"></th>
                         </thead>
                         {% for index, row in loaded_emails.parsed_messages.iterrows %}
                             <tr>
