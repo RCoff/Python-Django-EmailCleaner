@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+    <div class="container-sm">
+        {% if loaded_emails.total_messages %}
+            <h1 class="display-4">{{ loaded_emails.total_messages }} emails loaded</h1>
+        {% endif %}
+        {% if loaded_emails.unread_emails_count %}
+            <h1 class="display-6">{{ loaded_emails.unread_emails_count }} unread</h1>
+        {% endif %}
+        {% if loaded_emails.unread_emails_percent %}
+            <h1 class="display-6">{{ loaded_emails.unread_emails_percent }}% unread</h1>
+        {% endif %}
+        {% if loaded_emails.spam_emails_count %}
+            <h1 class="display-6">{{ loaded_emails.spam_emails_count }} spam</h1>
+        {% endif %}
+        <div class="row mt-4">
+            <div class="col-3">
+                <div class="p-4 mb-4 bg-light rounded-3">
+                    <button class="btn btn-primary">Mark All Read</button>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="p-4 mb-4 bg-light rounded-3">
+                    <button class="btn btn-primary">Clear Trash</button>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="p-4 mb-4 bg-light rounded-3">
+                    <button class="btn btn-primary">Delete All Spam</button>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="p-4 mb-4 bg-light rounded-3">
+                    <button class="btn btn-primary"></button>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="p-4 mb-4 bg-light rounded-3">
+                    <button class="btn btn-primary"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid">
+                <ul class="nav nav-tabs" id="emails-tab-list" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
+                                data-bs-target="#overview"
+                                type="button" role="tab" aria-controls="overview" aria-selected="true">Overview
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="unread-tab" data-bs-toggle="tab" data-bs-target="#unread"
+                                type="button" role="tab" aria-controls="unread" aria-selected="false">Unread
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="all-emails-tab" data-bs-toggle="tab" data-bs-target="#all-emails"
+                                type="button" role="tab" aria-controls="all-emails" aria-selected="false">All Emails
+                        </button>
+                    </li>
+                </ul>
+                {% if loaded_emails %}
+                    <table class="table py-3">
+                        <thead>
+                        <th scope="col">#</th>
+                        <th scope="col">From</th>
+                        <th scope="col">Domain</th>
+                        <th scope="col"></th>
+                        </thead>
+                        {% for index, row in loaded_emails.parsed_messages.iterrows %}
+                            <tr>
+                                <th scope="row">{{ index }}</th>
+                                <td>{{ row.from }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

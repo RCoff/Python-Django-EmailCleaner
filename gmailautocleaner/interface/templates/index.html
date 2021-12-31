@@ -7,43 +7,19 @@
 
 {% block body %}
     <div class="container-sm">
-        <div class="p-5 mb-4 bg-light rounded-3">
-            <div class="container-fluid">
-                {% if loaded_emails.total_messages %}
-                    <h1 class="display-6 py-2 mb-3">{{ loaded_emails.total_messages }} emails loaded</h1>
-                {% endif %}
-                {% if loaded_emails %}
-                    <table class="table py-3">
-                        <thead>
-                            <th scope="col">#</th>
-                            <th scope="col">From</th>
-                            <th scope="col">Domain</th>
-                            <th scope="col"></th>
-                        </thead>
-                        {% for index, row in loaded_emails.parsed_messages.iterrows %}
-                            <tr>
-                                <th scope="row">{{ index }}</th>
-                                <td>{{ row.from }}</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                {% else %}
-                    <h1 class="display-5">Hello!</h1>
-                    <div class="row">
-                        <div class="col">
-                            <a href="{% url 'gmail-sign-in' %}">
-                                <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Gmail</button>
-                            </a>
-                        </div>
-                        <div class="col">
-                            <a href="{% url 'outlook-sign-in' %}">
-                                <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Outlook</button>
-                            </a>
-                        </div>
-                    </div>
-                {% endif %}
+        <div class="p-5 bg-light rounded">
+            <h1 class="display-5">Hello!</h1>
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'gmail-sign-in' %}">
+                        <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Gmail</button>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'outlook-sign-in' %}">
+                        <button type="button" class="btn btn-lg btn-primary w-50 mx-auto">Outlook</button>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
