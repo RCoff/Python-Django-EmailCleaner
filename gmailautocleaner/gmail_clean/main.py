@@ -42,9 +42,17 @@ def main(session=None) -> dict:
     unread_percent_df = unread_percent_df.sort_values(by=['unread', 'Unread_%'], ascending=False)
     unread_percent_df = unread_percent_df[(unread_percent_df['unread'] >= 10) & (unread_percent_df['Unread_%'] >= 0.75)]
 
+    unread_emails_count = len(df[df['status'] == 'unread'].index)
+    unread_emails_percent = round((len(df[df['status'] == 'unread'].index) / len(df.index))*100, 1)
+    spam_emails_count = len(df[df['is_spam'] == True].index)
+
     return {'parsed_messages': df,
             'critical_unread_messages': unread_percent_df,
-            'total_messages': len(df.index)}
+            'total_messages': len(df.index),
+            'unread_emails_count': unread_emails_count,
+            'unread_emails_percent': unread_emails_percent,
+            'spam_emails_count': spam_emails_count,
+            'trash_emails_count': ''}
 
 
 if __name__ == "__main__":

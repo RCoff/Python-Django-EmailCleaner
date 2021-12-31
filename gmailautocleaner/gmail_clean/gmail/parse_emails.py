@@ -50,6 +50,8 @@ def parse_emails(messages: list, service_client) -> list:
             else:
                 message_detail_dict.update({'status': 'read'})
 
+            message_detail_dict.update({'is_trash': 'TRASH' in labels})
+            message_detail_dict.update({'is_spam': 'SPAM' in labels})
             message_detail_dict.update({'important': 'IMPORTANT' in labels})
 
     logging.debug(f"{len(message_details_list)} emails parsed")
