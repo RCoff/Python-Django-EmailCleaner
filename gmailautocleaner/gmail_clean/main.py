@@ -23,7 +23,7 @@ def main(session=None) -> dict:
 
         if messages is None:
             start_time = datetime.datetime.now()
-            messages = get_emails(user_id='me', service_client=service_client, status='all', include_trash=True)
+            messages = get_emails(user_id='me', service_client=service_client, status='all')
             print((datetime.datetime.now() - start_time) / 60)
             save_pickle(messages, 'raw_emails.p')
 

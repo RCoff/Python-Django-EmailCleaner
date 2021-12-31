@@ -3,8 +3,8 @@ import logging
 
 def get_emails(service_client,
                user_id: str = 'me',
-               include_spam_trash: bool = False,
-               include_trash: bool = True,
+               include_spam_trash: bool = True,
+               # include_trash: bool = True,
                max_results: int = 500,
                status: str = 'unread') -> list:
     if str(status).upper() == 'UNREAD' or status is None:
@@ -16,12 +16,12 @@ def get_emails(service_client,
     else:
         raise ValueError("Parameter 'status' must be one of: unread, read, all")
 
-    if include_trash is True:
-        in_trash = "in:trash"
-        if query is None:
-            query = in_trash
-        else:
-            query = query + f" {in_trash}"
+    # if include_trash is True:
+    #     in_trash = "in:trash"
+    #     if query is None:
+    #         query = in_trash
+    #     else:
+    #         query = query + f" {in_trash}"
 
     messages = service_client.users().messages().list(userId=user_id,
                                                       includeSpamTrash=include_spam_trash,
