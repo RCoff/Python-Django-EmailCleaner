@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 def main(session=None) -> dict:
     creds = Credentials(**session['credentials'])
     service_client = build('gmail', 'v1', credentials=creds)
-    # service_client = auth_google(session=session)
 
     messages = load_pickle('parsed_emails.p')
 
@@ -30,10 +29,12 @@ def main(session=None) -> dict:
 
         logger.info("Parsing raw emails")
         start_time = datetime.datetime.now()
+        logger.debug("Begin parsing messages from GMail")
         messages = parse_emails(messages, service_client)
-        print((datetime.datetime.now() - start_time) / 60)
-        save_pickle(messages, 'parsed_emails.p')
+        print(f"Parse time: {datetime.datetime.now() - start_time}")
+        # save_pickle(messages, 'parsed_emails.p')
 
+    post_parse_start = datetime.datetime.now()
     df = pd.DataFrame(messages)
     # group_count_df = df.groupby(by=['from-domain'])['id'].count()
     unsubscribable_emails = df[df['unsubscribe'] != ""].drop_duplicates(subset=['unsubscribe']).sort_values(by='domain')
@@ -45,8 +46,9 @@ def main(session=None) -> dict:
     unread_percent_df = unread_percent_df[(unread_percent_df['unread'] >= 10) & (unread_percent_df['Unread_%'] >= 0.75)]
 
     unread_emails_count = len(df[df['status'] == 'unread'].index)
-    unread_emails_percent = round((len(df[df['status'] == 'unread'].index) / len(df.index))*100, 1)
+    unread_emails_percent = round((len(df[df['status'] == 'unread'].index) / len(df.index)) * 100, 1)
     spam_emails_count = len(df[df['is_spam'] == True].index)
+    print(f"Post-Parse time: {datetime.datetime.now() - post_parse_start}")
 
     return {'parsed_messages': df,
             'unsubscribable_emails': unsubscribable_emails,
