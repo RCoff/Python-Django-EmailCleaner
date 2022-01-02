@@ -4,9 +4,9 @@ import logging
 import pandas as pd
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
-from gmail_clean.utils import load_pickle, save_pickle
-from gmail_clean.gmail.get_emails import get_emails
-from gmail_clean.gmail.parse_emails import parse_emails
+from email_clean.utils import load_pickle, save_pickle
+from email_clean.gmail.get_emails import get_emails
+from email_clean.gmail.parse_emails import parse_emails
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,7 @@ def main(session=None) -> dict:
 
     df = pd.DataFrame(messages)
     # group_count_df = df.groupby(by=['from-domain'])['id'].count()
+    unsubscribable_emails = df[df['unsubscribe'] != ""].drop_duplicates(subset=['unsubscribe']).sort_values(by='domain')
     unread_percent_df = pd.pivot_table(df[['domain', 'status']], index='domain', columns='status', aggfunc=len,
                                        fill_value=0)
     unread_percent_df['Unread_%'] = 1 - (
@@ -47,6 +48,7 @@ def main(session=None) -> dict:
     spam_emails_count = len(df[df['is_spam'] == True].index)
 
     return {'parsed_messages': df,
+            'unsubscribable_emails': unsubscribable_emails,
             'critical_unread_messages': unread_percent_df,
             'total_messages': len(df.index),
             'unread_emails_count': unread_emails_count,

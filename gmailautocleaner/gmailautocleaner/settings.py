@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'interface',
     'data',
     'api',
-    'gmail_clean',
+    'email_clean',
     'gmailautocleaner',
 ]
 

@@ -1,6 +1,6 @@
 from django.urls import path
-import gmail_clean.outlook.auth as outlook_auth
-import gmail_clean.gmail.auth as gmail_auth
+import email_clean.outlook.auth as outlook_auth
+import email_clean.gmail.auth as gmail_auth
 
 urlpatterns = [
     path('outlook/callback', outlook_auth.outlook_callback, name='outlook-callback'),

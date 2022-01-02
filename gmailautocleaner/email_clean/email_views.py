@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from gmail_clean import main
-from gmail_clean.outlook import get_emails
+from email_clean.gmail import main
+from email_clean.outlook import get_emails
 
 
 def load_gmail(request):

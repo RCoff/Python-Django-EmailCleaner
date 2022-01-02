@@ -1,5 +1,5 @@
 import logging
-from gmail_clean.utils import parse_email_domain
+from email_clean.utils import parse_email_domain
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,8 @@ def parse_emails(messages: list, service_client) -> list:
                         message_detail_dict.update({'domain': from_domain[from_domain.find('.', ) + 1:]})
                     elif from_domain.count('.') == 1:
                         message_detail_dict.update({'domain': from_domain})
+                elif header.get('name') == 'Date':
+                    message_detail_dict.update({'date-received': header.get('value', "")})
                 elif header.get('name', None) == 'Subject':
                     message_detail_dict.update({'subject': header.get('value', "")})
                 elif header.get('name', None) == 'List-Unsubscribe-Post':
@@ -39,6 +41,9 @@ def parse_emails(messages: list, service_client) -> list:
                 elif header.get('name', None) == 'List-Unsubscribe':
                     message_detail_dict.update({'unsubscribe': header.get('value', "")})
             else:
+                if not message_detail_dict.get('unsubscribe'):
+                    message_detail_dict.update({'unsubscribe': ""})
+
                 message_details_list.append(message_detail_dict)
 
         if 'labelIds' in message_details:
