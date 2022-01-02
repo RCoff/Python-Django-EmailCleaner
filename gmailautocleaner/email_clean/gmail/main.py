@@ -5,7 +5,7 @@ import pandas as pd
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from email_clean.utils import load_pickle, save_pickle
-from email_clean.gmail.get_emails import get_emails
+from email_clean.gmail.get_emails import list_emails
 from email_clean.gmail.parse_emails import parse_emails
 
 logger = logging.getLogger(__name__)
@@ -23,8 +23,9 @@ def main(session=None) -> dict:
 
         if messages is None:
             start_time = datetime.datetime.now()
-            messages = get_emails(user_id='me', service_client=service_client, status='all')
-            print((datetime.datetime.now() - start_time) / 60)
+            logger.debug(f"Begin getting messages from GMail API")
+            messages = list_emails(user_id='me', service_client=service_client, status='all')
+            print(f"Message retrieval time: {datetime.datetime.now() - start_time}")
             save_pickle(messages, 'raw_emails.p')
 
         logger.info("Parsing raw emails")
