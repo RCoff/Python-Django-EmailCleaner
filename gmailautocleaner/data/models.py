@@ -6,5 +6,7 @@ import uuid
 class EmailStorage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_email = models.EmailField()
-    messages_json = models.JSONField()
+    raw_emails = models.JSONField()
+    parsed_emails = models.JSONField()
+    expiration = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
