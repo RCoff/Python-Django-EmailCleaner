@@ -22,19 +22,14 @@ def list_emails(service_client,
                                                       q=query).execute()
     message_id_list = messages['messages']
 
-    if 'nextPageToken' in messages:
-        continue_paging = True
-
-        while continue_paging:
-            messages = service_client.users().messages().list(userId=user_id,
-                                                              includeSpamTrash=include_spam_trash,
-                                                              maxResults=max_results,
-                                                              q=query,
-                                                              pageToken=messages['nextPageToken']).execute()
-            if messages['messages']:
-                message_id_list = message_id_list + messages['messages']
-            if 'nextPageToken' not in messages:
-                continue_paging = False
+    while 'nextPageToken' in messages:
+        messages = service_client.users().messages().list(userId=user_id,
+                                                          includeSpamTrash=include_spam_trash,
+                                                          maxResults=max_results,
+                                                          q=query,
+                                                          pageToken=messages['nextPageToken']).execute()
+        if messages['messages']:
+            message_id_list = message_id_list + messages['messages']
 
     logging.debug(f"{len(message_id_list)} messages retrieved")
 
