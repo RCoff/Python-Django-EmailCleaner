@@ -11,13 +11,17 @@ logging.getLogger('googleapiclient').setLevel(logging.INFO)
 
 
 def gmail_sign_in(request):
-    if not request.session.get('credentials'):
-        auth_url, state = get_sign_in_flow()
-        request.session['state'] = state
+    if request.session.get('credentials'):
+        if request.session['credentials'].get('refresh_token') and \
+                request.session['credentials'].get('token_uri') and \
+                request.session['credentials'].get('client_id') and \
+                request.session['credentials'].get('client_secret'):
+            return HttpResponseRedirect(reverse('gmail-load'))
 
-        return HttpResponseRedirect(auth_url)
-    else:
-        return HttpResponseRedirect(reverse('gmail-load'))
+    auth_url, state = get_sign_in_flow()
+    request.session['state'] = state
+
+    return HttpResponseRedirect(auth_url)
 
 
 def gmail_callback(request):
