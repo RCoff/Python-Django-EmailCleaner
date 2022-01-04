@@ -24,7 +24,7 @@ def main(session=None) -> dict:
             start_time = datetime.datetime.now()
             logger.debug(f"Begin getting messages from GMail API")
             messages = list_emails(user_id='me', service_client=service_client, status='all')
-            print(f"Message retrieval time: {datetime.datetime.now() - start_time}")
+            print(f"Message list retrieval time: {datetime.datetime.now() - start_time}")
             save_pickle(messages, 'raw_emails.p')
 
         logger.info("Parsing raw emails")
