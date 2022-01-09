@@ -5,8 +5,7 @@ from email_clean.outlook import get_emails
 
 def load_gmail(request):
     if request.method == 'GET':
-        loaded_emails = main.main(request.session)
-        return render(request, 'emails.html', context={'loaded_emails': loaded_emails})
+        return main.main(request)
 
 
 def load_outlook(request):

@@ -8,7 +8,7 @@ from email_clean.exceptions import *
 logger = logging.getLogger(__name__)
 
 
-def _get_all_messages(messages: list, service_client) -> tuple:
+def get_all_messages(messages: list, service_client) -> tuple:
     message_detail_list = []
 
     def _callback_get_all_messages(request_id, response, exception):
@@ -51,7 +51,7 @@ def parse_emails(messages: list, service_client) -> list:
     message_details_list = []
 
     start_time = datetime.datetime.now()
-    message_response_tuple = _get_all_messages(messages, service_client)
+    message_response_tuple = get_all_messages(messages, service_client)
     print(f"Time to retrieve messages: {datetime.datetime.now() - start_time}")
 
     start_time = datetime.datetime.now()

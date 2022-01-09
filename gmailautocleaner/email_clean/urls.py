@@ -1,8 +1,9 @@
 from django.urls import path
 from . import views
-
+from .gmail.views import Display
 
 urlpatterns = [
-    path('load/gmail', views.load_gmail, name='gmail-load'),
-    path('load/outlook', views.load_outlook, name='outlook-load'),
+    path('gmail/load', views.load_gmail, name='gmail-load'),
+    path('gmail/<uuid:id>', Display.as_view(), name='gmail-display'),
+    path('outlook/load', views.load_outlook, name='outlook-load'),
 ]
