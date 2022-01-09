@@ -16,5 +16,6 @@ class Command(BaseCommand):
             user_messages.raw_emails = None
             user_messages.parsed_emails = None
             user_messages.expiration = None
+            user_messages.parse_status = 'ns'
             user_messages.save()
 

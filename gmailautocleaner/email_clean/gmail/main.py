@@ -39,6 +39,7 @@ def main(request=None):
             messages = list_emails(user_id='me', service_client=service_client, status='all')
             print(f"Message list retrieval time: {datetime.datetime.now() - start_time}")
             email_storage_obj.raw_emails = messages
+            email_storage_obj.parse_status = 'ns'
             email_storage_obj.save()
             # save_pickle(messages, 'raw_emails.p')
 
