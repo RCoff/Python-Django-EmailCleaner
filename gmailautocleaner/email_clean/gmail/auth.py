@@ -53,7 +53,8 @@ def get_sign_in_flow():
 def get_flow(state: str = None):
     return Flow.from_client_config(
         client_config=json.loads(os.environ.get('gmail_client_config')),
-        scopes=['https://www.googleapis.com/auth/gmail.readonly'],
+        scopes=['https://www.googleapis.com/auth/gmail.readonly',
+                'https://www.googleapis.com/auth/userinfo.email'],
         state=state
     )
 
