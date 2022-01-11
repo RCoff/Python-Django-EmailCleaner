@@ -24,7 +24,8 @@ class Display(View):
 
         parsed_messages = email_storage_obj.parsed_emails
         if not parsed_messages:
-            self.context = {'loading': True}
+            self.context = {'loading': True,
+                            'task_id': email_storage_obj.task_id}
             return render(request, template_name=self.template_name, context=self.context)
 
         email_df = pd.DataFrame(parsed_messages)

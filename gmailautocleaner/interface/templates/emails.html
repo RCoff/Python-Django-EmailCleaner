@@ -7,6 +7,9 @@
 
 {% block body %}
     <div class="container-sm">
+        {% if loading %}
+            <h1 class="display-4">{{ task_id }}</h1>
+        {% endif %}
         {% if loaded_emails.total_messages %}
             <h1 class="display-4">{{ loaded_emails.total_messages }} emails loaded</h1>
         {% endif %}
