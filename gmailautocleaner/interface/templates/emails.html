@@ -10,16 +10,13 @@
                 height: 100%;
             }
 
-            body {
+            .emails-loading {
                 display: flex;
                 align-items: center;
                 padding-top: 40px;
                 padding-bottom: 40px;
                 text-align: center;
-            }
-
-            nav {
-                display: none !important;
+                height: 80%;
             }
         </style>
     {% endif %}
@@ -28,11 +25,13 @@
 {% block body %}
     {% if task_id %}
         {#            <h1 class="display-6">{{ task_id }}</h1>#}
-        <div style="width: 100%; max-width: 400px; padding: 15px; margin: auto;">
-            <div class="spinner-border mb-4" style="width: 7rem; height: 7rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
+        <div class="emails-loading">
+            <div style="width: 100%; max-width: 500px; padding: 15px; margin: auto;">
+                <div class="spinner-border mb-4" style="width: 7rem; height: 7rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h1 class="display-6">Loading <b>9,472</b> emails...</h1>
             </div>
-            <h1 class="display-6">Loading <b>9,472</b> emails...</h1>
         </div>
     {% endif %}
     {% if loaded_emails %}
