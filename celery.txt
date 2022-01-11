@@ -1,0 +1,3 @@
+@ECHO OFF
+celery -A gmailautocleaner --workdir gmailautocleaner worker -l INFO --without-gossip --without-mingle --without-heartbeat -Of
+air --pool=solo
