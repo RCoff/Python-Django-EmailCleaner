@@ -1,6 +1,5 @@
-import datetime
-
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse, HttpResponseRedirect
+from django.utils import timezone
 from django.views import View
 import pandas as pd
 
@@ -21,11 +20,19 @@ class Display(View):
 
     def get(self, request, id):
         email_storage_obj = get_object_or_404(EmailStorage, id=id)
+        if email_storage_obj.expiration:
+            if email_storage_obj.expiration < timezone.now():
+                email_storage_obj.raw_emails = None
+                email_storage_obj.parsed_emails = None
+                email_storage_obj.expiration = None
+                email_storage_obj.save()
+                return HttpResponseRedirect(reverse('gmail-load'))
 
         parsed_messages = email_storage_obj.parsed_emails
         if not parsed_messages:
             self.context = {'loading': True,
-                            'task_id': email_storage_obj.task_id}
+                            'task_id': email_storage_obj.task_id,
+                            'emails_count': len(email_storage_obj.raw_emails)}
             return render(request, template_name=self.template_name, context=self.context)
 
         email_df = pd.DataFrame(parsed_messages)
