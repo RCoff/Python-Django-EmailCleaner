@@ -21,7 +21,11 @@ class Display(View):
 
     def get(self, request, id):
         email_storage_obj = get_object_or_404(EmailStorage, id=id)
+
         parsed_messages = email_storage_obj.parsed_emails
+        if not parsed_messages:
+            self.context = {'loading': True}
+            return render(request, template_name=self.template_name, context=self.context)
 
         email_df = pd.DataFrame(parsed_messages)
         # group_count_df = df.groupby(by=['from-domain'])['id'].count()
