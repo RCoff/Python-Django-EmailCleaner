@@ -32,7 +32,6 @@ DEBUG = os.environ.get('DEBUG', True) == 'True'
 ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,11 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'gmailautocleaner',
     'interface',
     'data',
     'api',
     'email_clean',
-    'gmailautocleaner',
 ]
 
 MIDDLEWARE = [

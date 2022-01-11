@@ -24,7 +24,7 @@ def parse_gmail(credentials: dict, user_obj_id: str):
     email_storage_obj.parsed_status = 'ip'
     email_storage_obj.save()
 
-    logger.debug("Begin parsing messages from GMail")
+    logger.debug("Begin parsing messages from Gmail")
     messages = parse_emails(messages, service_client)
     email_storage_obj.parsed_emails = messages
     email_storage_obj.parse_status = 'cp'
