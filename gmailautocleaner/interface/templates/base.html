@@ -28,7 +28,7 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="account-dropdown-menu">
                 <li><p class="dropdown-item-text">Hello, {{ user }}</p></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Logout</a></li>
+                <li><a class="dropdown-item" href="{% url 'sign-out' %}">Logout</a></li>
             </ul>
         </div>
         {#        {% else %}#}
