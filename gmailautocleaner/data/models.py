@@ -17,3 +17,4 @@ class EmailStorage(models.Model):
     parse_status = models.CharField(max_length=2, choices=CHOICES, default='ns')
     expiration = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
+    task_id = models.UUIDField(blank=True, null=True)

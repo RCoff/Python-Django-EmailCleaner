@@ -20,4 +20,5 @@ class Command(BaseCommand):
             user_messages.parsed_emails = None
             user_messages.expiration = None
             user_messages.parse_status = 'ns'
+            user_messages.task_id = None
             user_messages.save()
