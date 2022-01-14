@@ -6,5 +6,5 @@ __pycache__/
 *.json
 *.p
 db.sqlite3
-*.env
+*.env*
 requirements_old.txt
