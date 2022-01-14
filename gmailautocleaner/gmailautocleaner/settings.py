@@ -15,7 +15,8 @@ import os
 import django_heroku
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).parent.parent.parent.joinpath('.env'))
+load_dotenv(Path(__file__).parent.parent.parent.joinpath('.env-redis'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -168,7 +169,7 @@ LOGGING = {
 
 # CELERY SETTINGS
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_BROKER_POOL_LIMIT = int(os.environ.get('BROKER_POOL_LIMIT', 10))
+# CELERY_BROKER_POOL_LIMIT = int(os.environ.get('BROKER_POOL_LIMIT', 10))
 CELERY_CELERYD_MAX_TASKS_PER_CHILD = 1
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', None)
 CELERY_ACCEPT_CONTENT = ['application/json']
