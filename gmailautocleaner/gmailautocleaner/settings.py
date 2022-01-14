@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', True) == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -137,7 +137,7 @@ else:
     STATIC_ROOT = Path(BASE_DIR).joinpath('staticfiles')  # os.path.join(BASE_DIR, 'staticfiles')
     STATIC_URL = '/static/'
     STATICFILES_DIRS = (
-        Path(BASE_DIR).joinpath('static')  # os.path.join(BASE_DIR, 'static'),
+        Path(BASE_DIR).joinpath('static'),  # os.path.join(BASE_DIR, 'static'),
     )
 
 # Default primary key field type
