@@ -3,7 +3,7 @@
 {% block title %}InboxHero - Email Analysis{% endblock %}
 
 {% block head %}
-    {% if task_id %}
+    {% if id %}
         <style>
             html,
             body {
@@ -23,8 +23,8 @@
 {% endblock %}
 
 {% block body %}
-    {% if task_id %}
-        {#            <h1 class="display-6">{{ task_id }}</h1>#}
+    {% if id %}
+        {#            <h1 class="display-6">{{ id }}</h1>#}
         <div class="emails-loading">
             <div style="width: 100%; max-width: 500px; padding: 15px; margin: auto;">
                 <div class="spinner-border mb-4" style="width: 7rem; height: 7rem;" role="status">
@@ -122,14 +122,14 @@
 {% endblock %}
 
 {% block script %}
-    {% if task_id %}
+    {% if id %}
         <script type="application/javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 setInterval(checkTaskStatus, 2500)
             })
 
             async function checkTaskStatus() {
-                let response = await fetch('{% url 'task-status' task_id %}')
+                let response = await fetch('{% url 'task-model-status' id %}')
                 if (response.status === 200) {
                     let data = await response.json()
                     console.log(data)

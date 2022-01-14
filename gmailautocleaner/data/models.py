@@ -19,5 +19,8 @@ class EmailStorage(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     task_id = models.UUIDField(blank=True, null=True)
 
+    def ready(self):
+        return self.parse_status == 'cp'
+    
     def __str__(self):
         return f"{self.user_email} - {self.id}"
