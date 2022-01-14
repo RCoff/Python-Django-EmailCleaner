@@ -1,7 +1,19 @@
 from django.views import View
 from django.http import JsonResponse
 
+from data.models import EmailStorage
+
 from gmailautocleaner.celery import app
+
+
+class ModelTaskStatus(View):
+    id = None
+
+    def get(self, request, id):
+        self.id = id
+        obj = EmailStorage.objects.get(id=self.id)
+
+        return JsonResponse({'result': obj.ready()})
 
 
 # Create your views here.
