@@ -18,3 +18,6 @@ class EmailStorage(models.Model):
     expiration = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     task_id = models.UUIDField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user_email} - {self.id}"
