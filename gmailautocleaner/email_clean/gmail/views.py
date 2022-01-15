@@ -23,10 +23,7 @@ class Display(View):
         email_storage_obj = get_object_or_404(EmailStorage, id=id)
         if email_storage_obj.expiration:
             if email_storage_obj.expiration < timezone.now():
-                email_storage_obj.raw_emails = None
-                email_storage_obj.parsed_emails = None
-                email_storage_obj.expiration = None
-                email_storage_obj.save()
+                email_storage_obj.clear()
                 return HttpResponseRedirect(reverse('gmail-load'))
 
         parsed_messages = email_storage_obj.parsed_emails
@@ -65,4 +62,5 @@ class Display(View):
                              'spam_emails_count': len(email_df[email_df['is_spam'] == True].index),
                              'trash_emails_count': ''})
 
-        return render(request, template_name=self.template_name, context={'loaded_emails': self.context})
+        return render(request, template_name=self.template_name, context={'loaded_emails': self.context,
+                                                                          'retrieved_time': email_storage_obj.raw_emails_retrieval_time,})

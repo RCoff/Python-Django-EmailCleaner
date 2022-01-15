@@ -16,9 +16,4 @@ class Command(BaseCommand):
 
         logger.debug(f"{len(expired_messages)} user messages to clear")
         for user_messages in expired_messages:
-            user_messages.raw_emails = None
-            user_messages.parsed_emails = None
-            user_messages.expiration = None
-            user_messages.parse_status = 'ns'
-            user_messages.task_id = None
-            user_messages.save()
+            user_messages.clear()

@@ -43,6 +43,7 @@ def main(request=None):
 
             email_storage_obj.raw_emails = messages
             email_storage_obj.parse_status = 'ns'
+            email_storage_obj.raw_emails_retrieval_time = timezone.now()
             email_storage_obj.save()
 
         task = parse_gmail.delay(request.session['credentials'], email_storage_obj.id)
