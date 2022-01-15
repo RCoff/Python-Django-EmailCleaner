@@ -16,7 +16,7 @@ import django_heroku
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent.parent.joinpath('.env'))
-load_dotenv(Path(__file__).parent.parent.parent.joinpath('.env-redis'))
+load_dotenv(Path(__file__).parent.parent.parent.joinpath('.env-rabbitmq'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
