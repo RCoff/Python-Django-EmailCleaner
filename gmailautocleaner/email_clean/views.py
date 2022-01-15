@@ -16,4 +16,5 @@ def load_outlook(request):
 
 def sign_out(request):
     del request.session['credentials']
+    del request.session['user_email']
     return HttpResponseRedirect(reverse('index'))

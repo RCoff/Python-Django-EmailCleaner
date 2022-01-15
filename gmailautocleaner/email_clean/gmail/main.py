@@ -28,6 +28,7 @@ def main(request=None):
     service_client = build('gmail', 'v1', credentials=creds)
 
     email_storage_obj, created = EmailStorage.objects.get_or_create(user_email=user_info['email'])
+    request.session['user_page_id'] = str(email_storage_obj.id)
     if created:
         email_storage_obj.expiration = timezone.now() + datetime.timedelta(hours=24)
 
