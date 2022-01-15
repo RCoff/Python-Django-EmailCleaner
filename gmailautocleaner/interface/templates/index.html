@@ -3,12 +3,23 @@
 {% block title %}InboxHero - Home{% endblock %}
 
 {% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 {% endblock %}
 
 {% block body %}
     <div class="container-sm">
-        <div class="p-5 bg-light rounded">
-            <h1 class="display-5">Hello!</h1>
+        <div class="p-5 bg-light rounded text-center">
+            <h1 class="display-3 mb-2">InboxHero</h1>
+            <div class="col-lg-6 mx-auto">
+                <p class="lead mb-4">
+                    Take back your inbox with InboxHero! Quickly analyze your messages, get rid of villainous spam,
+                    and unsubscribe from the junk that clutters your life.
+                </p>
+            </div>
+            <hr/>
+            <div class="row mt-4 mb-2">
+                <h1 class="display-6">Select your provider <i class="bi bi-reply-all"></i></h1>
+            </div>
             <div class="row">
                 <div class="col">
                     <a class="btn btn-lg btn-primary w-50 mx-auto" href="{% url 'gmail-sign-in' %}">Gmail</a>
