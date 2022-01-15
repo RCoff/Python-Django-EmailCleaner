@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.views import View
 import pandas as pd
 
+from email_clean.tasks import parse_gmail
 from data.models import EmailStorage
 
 
@@ -33,6 +34,11 @@ class Display(View):
             self.context = {'loading': True,
                             'id': str(email_storage_obj.id),
                             'emails_count': len(email_storage_obj.raw_emails)}
+            if email_storage_obj.parse_status == 'ns' or not email_storage_obj.task_id:
+                task = parse_gmail.delay(request.session['credentials'], email_storage_obj.id)
+                email_storage_obj.task_id = task.id
+                email_storage_obj.save()
+
             return render(request, template_name=self.template_name, context=self.context)
 
         email_df = pd.DataFrame(parsed_messages)
