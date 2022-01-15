@@ -20,6 +20,7 @@ def main(request=None):
     try:
         user_info_service = build('oauth2', 'v2', credentials=creds)
         user_info = user_info_service.userinfo().get().execute()
+        request.session['user_email'] = user_info['email']
     except googleapiclient.http.HttpError:
         del request.session['credentials']
         return HttpResponseRedirect(reverse('gmail-sign-in'))
