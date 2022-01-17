@@ -3,7 +3,25 @@ import pickle
 from pathlib import Path
 import re
 
+from django.utils import timezone
+
 logger = logging.getLogger(__name__)
+
+
+def parse_retrieved_time(retrieved_time) -> str:
+    parse_time = (timezone.now() - retrieved_time).total_seconds() / 60
+    return_str = ''
+
+    if parse_time < 5.0:
+        return_str = "several minutes ago"
+    elif parse_time < 60.0:
+        return_str = f"{int(parse_time)} minutes ago"
+    elif 60.0 <= parse_time < 120.0:
+        return_str = f"{int(parse_time / 60)} hour ago"
+    elif parse_time >= 120.0:
+        return_str = f"{int(parse_time / 60)} hours ago"
+
+    return return_str
 
 
 def load_pickle(path: str or Path, on_error: str = 'ignore'):

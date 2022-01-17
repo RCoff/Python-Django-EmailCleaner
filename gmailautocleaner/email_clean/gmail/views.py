@@ -1,8 +1,11 @@
+import datetime
+
 from django.shortcuts import render, get_object_or_404, reverse, HttpResponseRedirect
 from django.utils import timezone
 from django.views import View
 import pandas as pd
 
+from email_clean.utils import parse_retrieved_time
 from email_clean.tasks import parse_gmail
 from data.models import EmailStorage
 
@@ -10,9 +13,9 @@ from data.models import EmailStorage
 # Create your views here.
 class Display(View):
     template_name = 'emails.html'
-    context = {'parsed_messages': pd.DataFrame(),
-               'unsubscribable_emails': pd.DataFrame(),
-               'critical_unread_messages': pd.DataFrame(),
+    context = {'parsed_messages': None,
+               'unsubscribable_emails': None,
+               'critical_unread_messages': None,
                'total_messages': None,
                'unread_emails_count': None,
                'unread_emails_percent': None,
@@ -38,22 +41,35 @@ class Display(View):
 
             return render(request, template_name=self.template_name, context=self.context)
 
+        # TODO: Statistics by sender
+        # TODO: Over time?
+
         email_df = pd.DataFrame(parsed_messages)
+        email_df['date-received'] = pd.to_datetime(email_df['date-received'], errors='coerce')
         # group_count_df = df.groupby(by=['from-domain'])['id'].count()
-        unsubscribable_emails = email_df[email_df['unsubscribe'] != ""].drop_duplicates(
-            subset=['unsubscribe']).sort_values(
-            by='domain')
+        # unsubscribable_emails_json = EmailStorage.objects.filter(id=id, parsed_emails__unsubscribe__isnull=False)
+
+        # Get emails received in the last 90 days that are unsubscribable
+        unsubscribable_emails = email_df[~email_df['unsubscribe'].isnull()] \
+            .sort_values(by='date-received', ascending=True) \
+            .drop_duplicates(subset=['domain'], keep='last')
+        unsubscribable_emails = unsubscribable_emails[
+            unsubscribable_emails['date-received'] >= (timezone.now() - datetime.timedelta(days=90))]
+
+        # Get emails that are the most unread by sender
         unread_percent_df = pd.pivot_table(email_df[['domain', 'status']], index='domain', columns='status',
                                            aggfunc=len,
                                            fill_value=0)
-        unread_percent_df['Unread_%'] = 1 - (
-                unread_percent_df['read'] / (unread_percent_df['unread'] + unread_percent_df['read']))
-        unread_percent_df = unread_percent_df.sort_values(by=['unread', 'Unread_%'], ascending=False)
+        unread_percent_df = unread_percent_df.merge(
+            email_df[['domain', 'date-received']].groupby(by=['domain'], as_index=True, sort=False).max(),
+            left_index=True, right_index=True, how='left').rename(columns={'date-received': 'date_received'})
+        unread_percent_df['Unread_pct'] = round((1 - (
+                unread_percent_df['read'] / (unread_percent_df['unread'] + unread_percent_df['read'])))*100, 0)
+        unread_percent_df = unread_percent_df.sort_values(by=['unread', 'Unread_pct'], ascending=False)
         unread_percent_df = unread_percent_df[
-            (unread_percent_df['unread'] >= 10) & (unread_percent_df['Unread_%'] >= 0.75)]
+            (unread_percent_df['unread'] >= 10) & (unread_percent_df['Unread_pct'] >= 0.75)]
 
-        self.context.update({'parsed_messages': email_df,
-                             'unsubscribable_emails': unsubscribable_emails,
+        self.context.update({'unsubscribable_emails': unsubscribable_emails,
                              'critical_unread_messages': unread_percent_df,
                              'total_messages': len(email_df.index),
                              'unread_emails_count': len(email_df[email_df['status'] == 'unread'].index),
@@ -61,6 +77,7 @@ class Display(View):
                                  (len(email_df[email_df['status'] == 'unread'].index) / len(email_df.index)) * 100, 1),
                              'spam_emails_count': len(email_df[email_df['is_spam'] == True].index),
                              'trash_emails_count': ''})
+        retrieved_time = parse_retrieved_time(email_storage_obj.raw_emails_retrieval_time)
 
         return render(request, template_name=self.template_name, context={'loaded_emails': self.context,
-                                                                          'retrieved_time': email_storage_obj.raw_emails_retrieval_time,})
+                                                                          'retrieved_time': retrieved_time})

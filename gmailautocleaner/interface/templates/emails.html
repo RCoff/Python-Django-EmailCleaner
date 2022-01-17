@@ -24,7 +24,6 @@
 
 {% block body %}
     {% if id %}
-        {#            <h1 class="display-6">{{ id }}</h1>#}
         <div class="emails-loading">
             <div style="width: 100%; max-width: 500px; padding: 15px; margin: auto;">
                 <div class="spinner-border mb-4" style="width: 7rem; height: 7rem;" role="status">
@@ -35,85 +34,133 @@
         </div>
     {% endif %}
     {% if loaded_emails %}
-        <div class="container-sm">
-            {% if loaded_emails.total_messages %}
-                <h1 class="display-4">{{ loaded_emails.total_messages }} emails loaded</h1>
-            {% endif %}
-            {% if loaded_emails.unread_emails_count %}
-                <h1 class="display-6">{{ loaded_emails.unread_emails_count }} unread</h1>
-            {% endif %}
-            {% if loaded_emails.unread_emails_percent %}
-                <h1 class="display-6">{{ loaded_emails.unread_emails_percent }}% unread</h1>
-            {% endif %}
-            {% if loaded_emails.spam_emails_count %}
-                <h1 class="display-6">{{ loaded_emails.spam_emails_count }} spam</h1>
-            {% endif %}
-            <div class="row mt-4">
-                <div class="col-3">
-                    <div class="p-4 mb-4 bg-light rounded-3">
-                        <button class="btn btn-primary">Mark All Read</button>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="p-4 mb-4 bg-light rounded-3">
-                        <button class="btn btn-primary">Clear Trash</button>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="p-4 mb-4 bg-light rounded-3">
-                        <button class="btn btn-primary">Delete All Spam</button>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="p-4 mb-4 bg-light rounded-3">
-                        <button class="btn btn-primary"></button>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="p-4 mb-4 bg-light rounded-3">
-                        <button class="btn btn-primary"></button>
-                    </div>
-                </div>
+        <div class="container-lg">
+            <div class="d-flex justify-content-end">
+                <p class="text-muted">Retrieved {{ retrieved_time }}</p>
             </div>
+            <div>
+                {% if loaded_emails.total_messages %}
+                    <h1 class="display-4">{{ loaded_emails.total_messages }} emails loaded</h1>
+                {% endif %}
+                {% if loaded_emails.unread_emails_count %}
+                    <h1 class="display-6">{{ loaded_emails.unread_emails_count }} unread</h1>
+                {% endif %}
+                {% if loaded_emails.unread_emails_percent %}
+                    <h1 class="display-6">{{ loaded_emails.unread_emails_percent }}% unread</h1>
+                {% endif %}
+                {% if loaded_emails.spam_emails_count %}
+                    <h1 class="display-6">{{ loaded_emails.spam_emails_count }} spam</h1>
+                {% endif %}
+            </div>
+            {#            <div class="row mt-4">#}
+            {#                <div class="col-3">#}
+            {#                    <div class="p-4 mb-4 bg-light rounded-3">#}
+            {#                        <button class="btn btn-primary">Mark All Read</button>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-3">#}
+            {#                    <div class="p-4 mb-4 bg-light rounded-3">#}
+            {#                        <button class="btn btn-primary">Clear Trash</button>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-3">#}
+            {#                    <div class="p-4 mb-4 bg-light rounded-3">#}
+            {#                        <button class="btn btn-primary">Delete All Spam</button>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-3">#}
+            {#                    <div class="p-4 mb-4 bg-light rounded-3">#}
+            {#                        <button class="btn btn-primary"></button>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-3">#}
+            {#                    <div class="p-4 mb-4 bg-light rounded-3">#}
+            {#                        <button class="btn btn-primary"></button>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
 
             <div class="p-5 mb-4 bg-light rounded-3">
                 <div class="container-fluid">
-                    <ul class="nav nav-tabs" id="emails-tab-list" role="tablist">
+                    <ul class="nav nav-tabs mb-3" id="emails-tab-list" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
+                            <button class="nav-link" id="overview-tab" data-bs-toggle="tab"
                                     data-bs-target="#overview"
                                     type="button" role="tab" aria-controls="overview" aria-selected="true">Overview
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="unread-tab" data-bs-toggle="tab" data-bs-target="#unread"
-                                    type="button" role="tab" aria-controls="unread" aria-selected="false">Unread
+                            <button class="nav-link active" id="unread-tab" data-bs-toggle="tab"
+                                    data-bs-target="#unread"
+                                    type="button" role="tab" aria-controls="unread" aria-selected="false">Critical
+                                Unread
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="all-emails-tab" data-bs-toggle="tab"
-                                    data-bs-target="#all-emails"
-                                    type="button" role="tab" aria-controls="all-emails" aria-selected="false">All Emails
+                                    data-bs-target="#unsubscribe"
+                                    type="button" role="tab" aria-controls="unsubscribe" aria-selected="false">Easy
+                                Unsubscribe
                             </button>
                         </li>
                     </ul>
                     {% if loaded_emails %}
-                        <table class="table py-3">
-                            <thead>
-                            <th scope="col">#</th>
-                            <th scope="col">From</th>
-                            <th scope="col">Domain</th>
-                            <th scope="col"></th>
-                            </thead>
-                            {% for index, row in loaded_emails.parsed_messages.iterrows %}
-                                <tr>
-                                    <th scope="row">{{ index }}</th>
-                                    <td>{{ row.from }}</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            {% endfor %}
-                        </table>
+                        <div class="tab-content" id="email-tab-content">
+                            <div class="tab-pane" id="overview" role="tabpanel" aria-label="overview-tab">
+                                <h1>Overview placeholder</h1>
+                            </div>
+                            <div class="tab-pane show active" id="unread" role="tabpanel" aria-label="unread-tab">
+                                <div class="d-flex my-4 justify-content-end">
+                                    <button type="button" class="btn btn-primary mx-2">Mark All Read</button>
+                                    <button type="button" class="btn btn-danger mx-2">Delete All</button>
+                                </div>
+                                <table class="table table-sm py-3">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Sender</th>
+                                        <th scope="col">Read</th>
+                                        <th scope="col">Unread</th>
+                                        <th scope="col">Unread %</th>
+                                        <th scope="col">Last Received</th>
+                                        <th scope="col"></th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for index, row in loaded_emails.critical_unread_messages.iterrows %}
+                                        <tr data-sender="{{ index }}">
+                                            <th scope="row">{{ index }}</th>
+                                            <td>{{ row.read }}</td>
+                                            <td>{{ row.unread }}</td>
+                                            <td>{{ row.Unread_pct|stringformat:"d%%" }}</td>
+                                            <td>{{ row.date_received }}</td>
+                                            <td><button class="btn btn-primary btn-sm">Mark Read</button></td>
+                                            <td><button class="btn btn-danger btn-sm">Delete</button></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="unsubscribe" role="tabpanel" aria-label="unsubscribe-tab">
+                                <h1>Unsubscribe placeholder</h1>
+                            </div>
+                        </div>
+                        {#                        <table class="table py-3">#}
+                        {#                            <thead>#}
+                        {#                            <th scope="col">#</th>#}
+                        {#                            <th scope="col">From</th>#}
+                        {#                            <th scope="col">Domain</th>#}
+                        {#                            <th scope="col"></th>#}
+                        {#                            </thead>#}
+                        {#                            {% for index, row in loaded_emails.parsed_messages.iterrows %}#}
+                        {#                                <tr>#}
+                        {#                                    <th scope="row">{{ index }}</th>#}
+                        {#                                    <td>{{ row.from }}</td>#}
+                        {#                                    <td></td>#}
+                        {#                                    <td></td>#}
+                        {#                                </tr>#}
+                        {#                            {% endfor %}#}
+                        {#                        </table>#}
                     {% endif %}
                 </div>
             </div>

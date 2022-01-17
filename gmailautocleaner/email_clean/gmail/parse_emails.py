@@ -80,7 +80,7 @@ def parse_emails(messages: list, service_client) -> list:
                     message_detail_dict.update({'unsubscribe': header.get('value', "")})
             else:
                 if not message_detail_dict.get('unsubscribe'):
-                    message_detail_dict.update({'unsubscribe': ""})
+                    message_detail_dict.update({'unsubscribe': None})
 
                 message_details_list.append(message_detail_dict)
 
