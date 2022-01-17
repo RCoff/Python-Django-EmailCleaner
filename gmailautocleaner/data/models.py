@@ -10,7 +10,7 @@ class EmailStorage(models.Model):
         ('cp', 'Complete'),
     ]
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     user_email = models.EmailField(unique=True, editable=False)
     raw_emails = models.JSONField(null=True, blank=True)
     raw_emails_retrieval_time = models.DateTimeField(null=True, blank=True)
@@ -34,3 +34,13 @@ class EmailStorage(models.Model):
 
     def __str__(self):
         return f"{self.user_email} - {self.id}"
+
+
+class ParsedEmail(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    raw_emails = models.ForeignKey(EmailStorage, on_delete=models.CASCADE)
+    message = models.JSONField()
+
+    def __str__(self):
+        return f"{self.raw_emails.user_email} - {self.raw_emails_id}"
+
