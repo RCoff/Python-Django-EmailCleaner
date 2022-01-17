@@ -1,0 +1,40 @@
+<div class="modal" id="mark-read-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mark As Read</h5>
+                <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="mark-as-read-text">Mark <b></b> emails from <b></b> as read?</p>
+            </div>
+            <div class="modal-footer">
+                <div class="me-auto">
+                    <input id="dont-show-again" type="checkbox">
+                    <label for="dont-show-again">Don't show this again</label>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="markRead()">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block script %}
+    <script type="application/javascript">
+        let markAsReadModal = document.getElementById('mark-read-modal')
+        markAsReadModal.addEventListener('show.bs.modal', function (event) {
+            let button = event.relatedTarget
+            let sender = button.getAttribute('data-sender')
+            let unread = button.getAttribute('data-unread')
+            let modalText = markAsReadModal.querySelector('#mark-as-read-text')
+            modalText.textContent = 'Mark ' + unread + ' emails from ' + sender + ' as read?'
+        })
+
+        function markRead() {
+            let modalDontShowCheckbox = markAsReadModal.querySelector('#dont-show-again')
+            dontShowMarkReadModal = modalDontShowCheckbox.checked
+            document.getElementById('unread')
+        }
+    </script>
+{% endblock %}

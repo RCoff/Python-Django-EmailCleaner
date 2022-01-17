@@ -84,9 +84,9 @@
                 <div class="container-fluid">
                     <ul class="nav nav-tabs mb-3" id="emails-tab-list" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="overview-tab" data-bs-toggle="tab"
-                                    data-bs-target="#overview"
-                                    type="button" role="tab" aria-controls="overview" aria-selected="true">Overview
+                            <button class="nav-link" id="analysis-tab" data-bs-toggle="tab"
+                                    data-bs-target="#analysis"
+                                    type="button" role="tab" aria-controls="analysis" aria-selected="true">Analysis
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -106,8 +106,8 @@
                     </ul>
                     {% if loaded_emails %}
                         <div class="tab-content" id="email-tab-content">
-                            <div class="tab-pane" id="overview" role="tabpanel" aria-label="overview-tab">
-                                <h1>Overview placeholder</h1>
+                            <div class="tab-pane" id="analysis" role="tabpanel" aria-label="analysis-tab">
+                                <h1>Analysis placeholder</h1>
                             </div>
                             <div class="tab-pane show active" id="unread" role="tabpanel" aria-label="unread-tab">
                                 <div class="d-flex my-4 justify-content-end">
@@ -128,39 +128,32 @@
                                     </thead>
                                     <tbody>
                                     {% for index, row in loaded_emails.critical_unread_messages.iterrows %}
-                                        <tr data-sender="{{ index }}">
+                                        <tr id="unread-{{ index }}" data-sender="{{ index }}">
                                             <th scope="row">{{ index }}</th>
                                             <td>{{ row.read }}</td>
                                             <td>{{ row.unread }}</td>
                                             <td>{{ row.Unread_pct|stringformat:"d%%" }}</td>
                                             <td>{{ row.date_received }}</td>
-                                            <td><button class="btn btn-primary btn-sm">Mark Read</button></td>
-                                            <td><button class="btn btn-danger btn-sm">Delete</button></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#mark-read-modal"
+                                                        data-sender="{{ index }}" data-unread="{{ row.unread }}">
+                                                    Mark Read
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-danger btn-sm">Delete</button>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>
+                                {% include 'components/mark-read-modal.html' %}
                             </div>
                             <div class="tab-pane" id="unsubscribe" role="tabpanel" aria-label="unsubscribe-tab">
                                 <h1>Unsubscribe placeholder</h1>
                             </div>
                         </div>
-                        {#                        <table class="table py-3">#}
-                        {#                            <thead>#}
-                        {#                            <th scope="col">#</th>#}
-                        {#                            <th scope="col">From</th>#}
-                        {#                            <th scope="col">Domain</th>#}
-                        {#                            <th scope="col"></th>#}
-                        {#                            </thead>#}
-                        {#                            {% for index, row in loaded_emails.parsed_messages.iterrows %}#}
-                        {#                                <tr>#}
-                        {#                                    <th scope="row">{{ index }}</th>#}
-                        {#                                    <td>{{ row.from }}</td>#}
-                        {#                                    <td></td>#}
-                        {#                                    <td></td>#}
-                        {#                                </tr>#}
-                        {#                            {% endfor %}#}
-                        {#                        </table>#}
                     {% endif %}
                 </div>
             </div>
@@ -169,6 +162,9 @@
 {% endblock %}
 
 {% block script %}
+    <script type="application/javascript">
+        let dontShowMarkReadModal = false
+    </script>
     {% if id %}
         <script type="application/javascript">
             document.addEventListener('DOMContentLoaded', function () {
