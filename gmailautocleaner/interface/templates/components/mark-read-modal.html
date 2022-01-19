@@ -14,7 +14,9 @@
                     <label for="dont-show-again">Don't show this again</label>
                 </div>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="markRead()">Confirm</button>
+                <button id="mark-read-modal-confirm-btn" type="button" class="btn btn-primary" data-id=""
+                        onclick="markAsReadFromModal(this)">Confirm
+                </button>
             </div>
         </div>
     </div>
@@ -22,19 +24,12 @@
 
 {% block script %}
     <script type="application/javascript">
-        let markAsReadModal = document.getElementById('mark-read-modal')
-        markAsReadModal.addEventListener('show.bs.modal', function (event) {
-            let button = event.relatedTarget
-            let sender = button.getAttribute('data-sender')
-            let unread = button.getAttribute('data-unread')
-            let modalText = markAsReadModal.querySelector('#mark-as-read-text')
-            modalText.textContent = 'Mark ' + unread + ' emails from ' + sender + ' as read?'
-        })
-
-        function markRead() {
-            let modalDontShowCheckbox = markAsReadModal.querySelector('#dont-show-again')
-            dontShowMarkReadModal = modalDontShowCheckbox.checked
-            document.getElementById('unread')
+        function markAsReadFromModal(button) {
+            let markAsReadModal = document.getElementById('mark-read-modal')
+            let modal = bootstrap.Modal.getOrCreateInstance(markAsReadModal)
+            dontShowMarkReadModal = markAsReadModal.querySelector('#dont-show-again').checked
+            markAsRead(button.getAttribute('data-id'))
+            modal.hide()
         }
     </script>
 {% endblock %}

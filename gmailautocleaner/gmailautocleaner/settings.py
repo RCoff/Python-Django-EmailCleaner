@@ -138,7 +138,8 @@ else:
     STATIC_ROOT = Path(BASE_DIR).joinpath('staticfiles')  # os.path.join(BASE_DIR, 'staticfiles')
     STATIC_URL = '/static/'
     STATICFILES_DIRS = (
-        Path(BASE_DIR).joinpath('static'),  # os.path.join(BASE_DIR, 'static'),
+        BASE_DIR.joinpath('static'),
+        BASE_DIR.joinpath('interface/static'),
     )
 
 # Default primary key field type

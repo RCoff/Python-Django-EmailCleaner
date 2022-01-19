@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}InboxHero - Emails{% endblock %}
 
@@ -111,12 +112,30 @@
                             </div>
                             <div class="tab-pane show active" id="unread" role="tabpanel" aria-label="unread-tab">
                                 <div class="d-flex my-4 justify-content-end">
-                                    <button type="button" class="btn btn-primary mx-2">Mark All Read</button>
-                                    <button type="button" class="btn btn-danger mx-2">Delete All</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-lg mx-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-envelope-open"
+                                             viewBox="0 0 16 16">
+                                            <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882l-6-3.2ZM15 7.383l-4.778 2.867L15 13.117V7.383Zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765l6-3.2Z"/>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-lg mx-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <table class="table table-sm py-3">
+                                <table id="unread-table" class="table table-sm table-light align-middle">
                                     <thead>
                                     <tr>
+                                        <td aria-label="Select all">
+                                            <input type="checkbox" class="form-check-input" data-id="unread-table"
+                                                   onclick="checkAllCheckboxes(this)"
+                                                   aria-label="Select all emails in the table">
+                                        </td>
                                         <th scope="col">Sender</th>
                                         <th scope="col">Read</th>
                                         <th scope="col">Unread</th>
@@ -129,20 +148,36 @@
                                     <tbody>
                                     {% for index, row in loaded_emails.critical_unread_messages.iterrows %}
                                         <tr id="unread-{{ index }}" data-sender="{{ index }}">
+                                            <td><input type="checkbox" class="form-check-input"
+                                                       data-id="unread-{{ index }}" onclick="highlightRow(this)"
+                                                       aria-label="Select emails from {{ index }}">
+                                            </td>
                                             <th scope="row">{{ index }}</th>
                                             <td>{{ row.read }}</td>
                                             <td>{{ row.unread }}</td>
                                             <td>{{ row.Unread_pct|stringformat:"d%%" }}</td>
                                             <td>{{ row.date_received }}</td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                        data-bs-target="#mark-read-modal"
-                                                        data-sender="{{ index }}" data-unread="{{ row.unread }}">
-                                                    Mark Read
+                                                <button class="btn btn-outline-secondary btn-sm"
+                                                        data-id="unread-{{ index }}"
+                                                        data-sender="{{ index }}" data-unread="{{ row.unread }}"
+                                                        onclick="callModalOrMarkAsRead(this)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         fill="currentColor" class="bi bi-envelope-open"
+                                                         viewBox="0 0 16 16">
+                                                        <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882l-6-3.2ZM15 7.383l-4.778 2.867L15 13.117V7.383Zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765l6-3.2Z"/>
+                                                    </svg>
                                                 </button>
                                             </td>
                                             <td>
-                                                <button class="btn btn-danger btn-sm">Delete</button>
+                                                <button class="btn btn-outline-danger btn-sm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                        <path fill-rule="evenodd"
+                                                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                    </svg>
+                                                </button>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -162,9 +197,7 @@
 {% endblock %}
 
 {% block script %}
-    <script type="application/javascript">
-        let dontShowMarkReadModal = false
-    </script>
+    <script src="{% static 'js/emails.js' %}"></script>
     {% if id %}
         <script type="application/javascript">
             document.addEventListener('DOMContentLoaded', function () {
