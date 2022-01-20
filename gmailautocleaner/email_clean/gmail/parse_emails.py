@@ -1,6 +1,7 @@
 import datetime
 import logging
 import time
+import re
 
 from email_clean.utils import parse_email_domain
 from email_clean.exceptions import *
@@ -64,6 +65,8 @@ def parse_emails(messages: list, service_client) -> list:
             for header in headers:
                 if header.get('name', None) == 'From':
                     message_detail_dict.update({'from': header.get('value', "")})
+                    message_detail_dict.update(
+                        {'sender': re.sub(" <.*@.*>$", '', str(header.get('value', "").strip()))})
                     from_domain = parse_email_domain(header.get('value', ""))
                     message_detail_dict.update({'from-domain': from_domain})
                     if from_domain.count('.') > 1:

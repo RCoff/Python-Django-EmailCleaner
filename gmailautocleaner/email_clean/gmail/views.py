@@ -57,14 +57,14 @@ class Display(View):
             unsubscribable_emails['date-received'] >= (timezone.now() - datetime.timedelta(days=90))]
 
         # Get emails that are the most unread by sender
-        unread_percent_df = pd.pivot_table(email_df[['domain', 'status']], index='domain', columns='status',
+        unread_percent_df = pd.pivot_table(email_df[['sender', 'status']], index='sender', columns='status',
                                            aggfunc=len,
                                            fill_value=0)
         unread_percent_df = unread_percent_df.merge(
-            email_df[['domain', 'date-received']].groupby(by=['domain'], as_index=True, sort=False).max(),
+            email_df[['sender', 'date-received']].groupby(by=['sender'], as_index=True, sort=False).max(),
             left_index=True, right_index=True, how='left').rename(columns={'date-received': 'date_received'})
         unread_percent_df['Unread_pct'] = round((1 - (
-                unread_percent_df['read'] / (unread_percent_df['unread'] + unread_percent_df['read'])))*100, 0)
+                unread_percent_df['read'] / (unread_percent_df['unread'] + unread_percent_df['read']))) * 100, 0)
         unread_percent_df = unread_percent_df.sort_values(by=['unread', 'Unread_pct'], ascending=False)
         unread_percent_df = unread_percent_df[
             (unread_percent_df['unread'] >= 10) & (unread_percent_df['Unread_pct'] >= 0.75)]
