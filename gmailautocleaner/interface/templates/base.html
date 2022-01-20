@@ -15,10 +15,13 @@
 <nav class="navbar navbar-light bg-light mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'index' %}">Home</a>
+        {% if request.user.is_staff %}
+            <a class="btn btn-outline-danger ms-auto me-3" href="{% url 'admin:index' %}" style="min-height: 41px;">Admin</a>
+        {% endif %}
         {% if request.session.user_email %}
             <div class="dropdown">
                 <button class="btn btn-outline-secondary me-2 dropdown-toggle" type="button" id="account-dropdown-menu"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                        style="min-height: 41px;" data-bs-toggle="dropdown" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                          class="bi bi-gear-wide"
                          viewBox="0 0 16 16">
