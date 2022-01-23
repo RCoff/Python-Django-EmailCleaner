@@ -18,7 +18,7 @@
         {% if request.user.is_staff %}
             <a class="btn btn-outline-danger ms-auto me-3" href="{% url 'admin:index' %}" style="min-height: 41px;">Admin</a>
         {% endif %}
-        {% if request.session.user_email %}
+        {% if request.user.is_authenticated %}
             <div class="dropdown">
                 <button class="btn btn-outline-secondary me-2 dropdown-toggle" type="button" id="account-dropdown-menu"
                         style="min-height: 41px;" data-bs-toggle="dropdown" aria-expanded="false">
@@ -29,7 +29,7 @@
                     </svg>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="account-dropdown-menu">
-                    <li><p class="dropdown-item-text">Hello, {{ request.session.user_email }}</p></li>
+                    <li><p class="dropdown-item-text">Hello, {{ request.user.email }}</p></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>

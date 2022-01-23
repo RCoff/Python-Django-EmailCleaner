@@ -1,6 +1,7 @@
 import datetime
 
 from django.shortcuts import render, get_object_or_404, reverse, HttpResponseRedirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views import View
 import pandas as pd
@@ -11,7 +12,8 @@ from data.models import EmailStorage
 
 
 # Create your views here.
-class Display(View):
+class Display(LoginRequiredMixin, View):
+    login_url = '/auth/gmail/sign-in'
     template_name = 'emails.html'
     context = {'parsed_messages': None,
                'unsubscribable_emails': None,
@@ -24,6 +26,9 @@ class Display(View):
 
     def get(self, request, id):
         email_storage_obj = get_object_or_404(EmailStorage, id=id)
+        if not email_storage_obj.expiration and email_storage_obj.raw_emails_retrieval_time:
+            email_storage_obj.expiration = email_storage_obj.raw_emails_retrieval_time + datetime.timedelta(hours=24)
+            email_storage_obj.save()
         if email_storage_obj.expiration:
             if email_storage_obj.expiration < timezone.now():
                 email_storage_obj.clear()
@@ -34,10 +39,6 @@ class Display(View):
             self.context = {'loading': True,
                             'id': str(email_storage_obj.id),
                             'emails_count': len(email_storage_obj.raw_emails)}
-            if email_storage_obj.parse_status == 'ns' or not email_storage_obj.task_id:
-                task = parse_gmail.delay(request.session['credentials'], email_storage_obj.id)
-                email_storage_obj.task_id = task.id
-                email_storage_obj.save()
 
             return render(request, template_name=self.template_name, context=self.context)
 

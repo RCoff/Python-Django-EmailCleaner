@@ -1,33 +1,26 @@
 import datetime
 import logging
 
-from django.shortcuts import reverse, HttpResponse, HttpResponseRedirect
+from django.shortcuts import reverse, HttpResponseRedirect
 from django.utils import timezone
-import googleapiclient.http
+from django.contrib.auth.decorators import login_required
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 
 from email_clean.gmail.get_emails import list_emails
 from email_clean.tasks import parse_gmail
 from data.models import EmailStorage
+from django_celery_results.models import TaskResult
 
 logger = logging.getLogger(__name__)
 
 
-def main(request=None):
+@login_required(login_url='/auth/gmail/sign-in')
+def main(request):
     creds = Credentials(**request.session['credentials'])
-
-    try:
-        user_info_service = build('oauth2', 'v2', credentials=creds)
-        user_info = user_info_service.userinfo().get().execute()
-        request.session['user_email'] = user_info['email']
-    except googleapiclient.http.HttpError:
-        del request.session['credentials']
-        return HttpResponseRedirect(reverse('gmail-sign-in'))
-
     service_client = build('gmail', 'v1', credentials=creds)
 
-    email_storage_obj, created = EmailStorage.objects.get_or_create(user_email=user_info['email'])
+    email_storage_obj, created = EmailStorage.objects.get_or_create(user_email=request.user.email)
     request.session['user_page_id'] = str(email_storage_obj.id)
     if created:
         email_storage_obj.expiration = timezone.now() + datetime.timedelta(hours=24)

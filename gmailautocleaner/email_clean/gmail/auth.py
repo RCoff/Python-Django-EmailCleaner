@@ -3,25 +3,22 @@ from pathlib import Path
 import json
 import os
 
-from django.shortcuts import HttpResponseRedirect, reverse
+from django.contrib.auth.models import User
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+from django.shortcuts import redirect, reverse
 from google_auth_oauthlib.flow import Flow
+from django.contrib.auth import login
 
 logger = logging.getLogger(__name__)
 logging.getLogger('googleapiclient').setLevel(logging.INFO)
 
 
 def gmail_sign_in(request):
-    if request.session.get('credentials'):
-        if request.session['credentials'].get('refresh_token') and \
-                request.session['credentials'].get('token_uri') and \
-                request.session['credentials'].get('client_id') and \
-                request.session['credentials'].get('client_secret'):
-            return HttpResponseRedirect(reverse('gmail-load'))
-
     auth_url, state = get_sign_in_flow()
     request.session['state'] = state
 
-    return HttpResponseRedirect(auth_url)
+    return redirect(auth_url)
 
 
 def gmail_callback(request):
@@ -35,7 +32,12 @@ def gmail_callback(request):
         'scopes': credentials.scopes
     }
 
-    return HttpResponseRedirect(reverse('gmail-load'))
+    user = get_or_create_user(request, **request.session['credentials'])
+    login(request, user)
+
+    # TODO: Redirect to an error page if something goes wrong
+
+    return redirect(reverse('gmail-load'))
 
 
 def get_sign_in_flow():
@@ -67,3 +69,17 @@ def get_token_from_code(request):
 
     credentials = flow.credentials
     return credentials
+
+
+def get_or_create_user(request, **credentials) -> User or None:
+    creds = Credentials(**credentials)
+
+    user_info_service = build('oauth2', 'v2', credentials=creds)
+    user_info = user_info_service.userinfo().get().execute()
+
+    user, user_created = User.objects.get_or_create(username=user_info['email'], email=user_info['email'])
+    if user_created:
+        user.set_unusable_password()
+        user.save()
+
+    return user
