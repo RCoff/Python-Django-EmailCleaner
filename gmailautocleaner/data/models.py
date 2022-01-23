@@ -1,4 +1,5 @@
 from django.db import models
+from django_celery_results.models import TaskResult
 import uuid
 
 
@@ -18,7 +19,7 @@ class EmailStorage(models.Model):
     parse_status = models.CharField(max_length=2, choices=CHOICES, default='ns')
     expiration = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    task_id = models.UUIDField(blank=True, null=True)
+    task = models.ForeignKey(TaskResult, blank=True, null=True, on_delete=models.SET_NULL)
 
     def ready(self):
         return self.parse_status == 'cp'
@@ -29,7 +30,7 @@ class EmailStorage(models.Model):
         self.parsed_emails = None
         self.parse_status = 'ns'
         self.expiration = None
-        self.task_id = None
+        self.task = None
         self.save()
 
     def __str__(self):

@@ -37,7 +37,7 @@ class Display(LoginRequiredMixin, View):
         parsed_messages = email_storage_obj.parsed_emails
         if not parsed_messages:
             self.context = {'loading': True,
-                            'id': str(email_storage_obj.id),
+                            'id': str(email_storage_obj.task.task_id),
                             'emails_count': len(email_storage_obj.raw_emails)}
 
             return render(request, template_name=self.template_name, context=self.context)

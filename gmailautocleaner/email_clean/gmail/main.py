@@ -41,7 +41,7 @@ def main(request):
             email_storage_obj.save()
 
         task = parse_gmail.delay(request.session['credentials'], email_storage_obj.id)
-        email_storage_obj.task_id = task.id
+        email_storage_obj.task = TaskResult.objects.get(task_id=task.id)
         email_storage_obj.save()
 
     return HttpResponseRedirect(reverse('gmail-display', args=[email_storage_obj.id]))

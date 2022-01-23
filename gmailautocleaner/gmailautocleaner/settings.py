@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django_celery_results',
     'gmailautocleaner',
     'interface',
     'data',
@@ -172,7 +173,8 @@ LOGGING = {
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 # CELERY_BROKER_POOL_LIMIT = int(os.environ.get('BROKER_POOL_LIMIT', 10))
 CELERY_CELERYD_MAX_TASKS_PER_CHILD = 1
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', None)
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
